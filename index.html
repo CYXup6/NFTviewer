@@ -10,21 +10,24 @@
   <p id="status" style="color:red;"></p>
 
   <div id="namediv" style="display: none;">
-  <a href="#" id="nameurl"  target="_blank" style="color:green;">View Token/NFT Names</a>
+  <!-- <a href="#" id="nameurl"  target="_blank" style="color:green;">View Token/NFT Names</a> -->
+  <p id="token"></p>
+  <p id="nft"></p>
+  <p id="submitT"></p>
   </div>
 
   <br>
   <br>
 
   <div id="imagediv" style="display: none;">
-  <a href="#" id="imageurl"  target="_blank" style="color:green;">View Image</a>
+  <a href="#" id="imageurl"  target="_blank" style="color:green;">View Asset</a>
   </div>
 
   <br>
   <br>
 
   <div id="nftdiv" style="display: none;">
-  <a href="#" id="nfturl"  target="_blank" style="color:green;">View NFT File</a>
+  <a href="#" id="nfturl"  target="_blank" style="color:green;">View Cover</a>
   </div>
 
 
@@ -51,39 +54,73 @@
   document.getElementById('imagediv').style="display: none;";
   document.getElementById('namediv').style="display: none;";
   var key=document.getElementById('key').value;
-  var storage = firebase.storage();
+  // var storage = firebase.storage();
   try{
-  var pathImage = storage.ref(key+'/image.png');
-  var pathNft = storage.ref(key+'/nft.txt');
-  var pathName = storage.ref(key+'/name.txt');
+  fetch("https://firebasestorage.googleapis.com/v0/b/nft-ipfs.appspot.com/o/"+key+"%2Fprofile.json?alt=media")
+    .then((response) => {
+      return response.json()
+    })
+    .then((data) => {
+      if(data['assetUrl']==undefined){
+        throw "Fetch error!!"
+      }
+      document.getElementById('imageurl').href=data['assetUrl'];
+      document.getElementById('imagediv').style="";
+      document.getElementById('nfturl').href=data['coverUrl'];
+      document.getElementById('nftdiv').style="";
+      document.getElementById('token').innerHTML="Token Name: "+data['tokenNam'];
+      document.getElementById('nft').innerHTML="NFT Name: "+data['nftNam'];
+      document.getElementById('submitT').innerHTML="Submit Date: "+data['submitTime'];
+      document.getElementById('namediv').style="";
+    })
+    .catch((err) => {
+      document.getElementById("status").innerHTML = "Error key!";
+      throw "Fetch error!!"
+    });
 
 
-  pathImage.getDownloadURL()
-  .then((url) => {
-    document.getElementById('imageurl').href=url;
-    document.getElementById('imagediv').style="";
-  })
-  .catch((error) => {
-    document.getElementById("status").innerHTML = "Error key!";
-  });
 
-  pathNft.getDownloadURL()
-  .then((url) => {
-    document.getElementById('nfturl').href=url;
-    document.getElementById('nftdiv').style="";
-  })
-  .catch((error) => {
-    document.getElementById("status").innerHTML = "Error key!";
-  });
 
-  pathName.getDownloadURL()
-  .then((url) => {
-    document.getElementById('nameurl').href=url;
-    document.getElementById('namediv').style="";
-  })
-  .catch((error) => {
-    document.getElementById("status").innerHTML = "Error key!";
-  });
+
+
+
+
+
+
+
+
+
+  // var pathImage = storage.ref(key+'/image.png');
+  // var pathNft = storage.ref(key+'/nft.txt');
+  // var pathName = storage.ref(key+'/name.txt');
+
+
+  // pathImage.getDownloadURL()
+  // .then((url) => {
+  //   document.getElementById('imageurl').href=url;
+  //   document.getElementById('imagediv').style="";
+  // })
+  // .catch((error) => {
+  //   document.getElementById("status").innerHTML = "Error key!";
+  // });
+
+  // pathNft.getDownloadURL()
+  // .then((url) => {
+  //   document.getElementById('nfturl').href=url;
+  //   document.getElementById('nftdiv').style="";
+  // })
+  // .catch((error) => {
+  //   document.getElementById("status").innerHTML = "Error key!";
+  // });
+
+  // pathName.getDownloadURL()
+  // .then((url) => {
+  //   document.getElementById('nameurl').href=url;
+  //   document.getElementById('namediv').style="";
+  // })
+  // .catch((error) => {
+  //   document.getElementById("status").innerHTML = "Error key!";
+  // });
   }
   catch(e){
     document.getElementById("status").innerHTML = "Error key!";
