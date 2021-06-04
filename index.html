@@ -23,14 +23,16 @@
 </head>
 <body>
 	<h1>View Your NFT</h1>
-  <p>Enter your key: <input type="text" id="key" value=""></p>
+  <p>Enter your Secret key: <input type="text" id="key" value=""></p>
   <br>
   <button class="button" id="submit" type="button" onclick="submit()">Submit</button>
-  <p id="status" style="color:red;"></p>
+  <p id="status"></p>
 
   <div id="namediv" style="display: none;">
   <!-- <a href="#" id="nameurl"  target="_blank" style="color:green;">View Token/NFT Names</a> -->
+  <p id="success"></p>
   <p id="submitT"></p>
+  <p id="sk"></p>
   <p id="token"></p>
   <p id="nft"></p>
   <p id="description"></p>
@@ -79,7 +81,7 @@
   var key=document.getElementById('key').value;
   // var storage = firebase.storage();
   try{
-  fetch("https://firebasestorage.googleapis.com/v0/b/nft-ipfs.appspot.com/o/"+key+"%2Fprofile.json?alt=media")
+  fetch("https://firebasestorage.googleapis.com/v0/b/nft-ipfs.appspot.com/o/"+key+".json?alt=media")
     .then((response) => {
       return response.json()
     })
@@ -87,10 +89,16 @@
       if(data['assetUrl']==undefined){
         throw "Fetch error!!"
       }
+      if(data['success']){
+        document.getElementById('success').innerHTML="🟢Success";
+      }else{
+        document.getElementById('success').innerHTML="⚠️Failed";
+      }
       document.getElementById('imageurl').href=data['assetUrl'];
       document.getElementById('imagediv').style="";
       document.getElementById('nfturl').href=data['coverUrl'];
       document.getElementById('nftdiv').style="";
+      document.getElementById('sk').innerHTML="Secret Key: "+data['sk'];
       document.getElementById('token').innerHTML="Token Name: "+data['tokenNam'];
       document.getElementById('nft').innerHTML="NFT Name: "+data['nftNam'];
       document.getElementById('submitT').innerHTML="Submit Date: "+data['submitTime'];
@@ -102,7 +110,7 @@
       document.getElementById('namediv').style="";
     })
     .catch((err) => {
-      document.getElementById("status").innerHTML = "Error key⚠️";
+      document.getElementById("status").innerHTML = "Processing... Please try again later⚠️";
       throw "Fetch error!!"
     });
 
